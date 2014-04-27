@@ -4,12 +4,18 @@ Getting-and-cleaning-data-exam
 THIS DOCUMENT IS ALSO AVAILABLE A PDF VERSION IN THE SAME DIRECTORY 
 
 1. GENERAL INSTRUCTIONS
-The following sequence of function calls allows accomplishing all tasks required by the project: 
-
+The following sequence of function calls allows accomplishing all tasks required by the project.
+  
 1)  check_if_exists()
-2)	original_df <- readData()
+
+2)	original_df <- readData("UCI HAR Dataset", FALSE)
+
 3)	subset_df <- extractMeanStdColumns(original_df)
+
 4)	summarized_df <- summarizedData(subset_df)
+
+All these functions have to be run in the indicated sequence order to obtain the file "output.txt" as it has been uploaded in the coursera web page. Also notice that the input for the "extractMeanStdColumns()" function has to be the output of "readData()" function and that the input for "summarizedData()" has to be the output of "extractMeanStdColumns()" function.
+Instead of creating an overall function containing this sequence with the correct inputs, I prefer to call each function separately from the command line in order to have access to outputs from readData() function and from extractMeanStdColumns(). Additionally, in this way, final user is provided with the flexibility to decide whether include the Inertial Signals or not and, in case she does, she can access to this data as an output from the readData() function.
 
 If the UCI HAR Dataset directory does not exist in the local computer, an internet connection is needed for the check_if_exists() function to programmatically download the source files and create the UCI HAR Data set folder in the local working directory.
 
