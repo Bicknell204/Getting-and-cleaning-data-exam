@@ -201,9 +201,7 @@ readInertialData<-function(original_df, main_folder, type) {
     filenames<-apply(expand.grid(root_part, second_part), 1, paste, collapse = "_")
     filenames<-sort(filenames)
   
-    ## The elements stored in the filenames vector are now: "body_acc_x", "body_acc_y", 
-    ## "body_acc_z", "body_gyro_x", "body_gyro_y", "body_gyro_z", "total_acc_x", "total_acc_y", "total_acc_z"
-    ## Please notice that in filnames both the extension ".txt" and the path are missing. 
+    ## The elements stored in the filenames vector are now: names Please notice that in filnames both the extension ".txt" and the path are missing. 
     ## This is done on purpose since filenames without these pieces of information will be used to name
     ## the columns of the data frame that is going to be built in the next few lines.
     for (i in filenames) 
@@ -265,20 +263,23 @@ summarizedData<-function(subset_df){
     ## the mean and the standard deviation of each column is calculated and stored in the 
     ## resultng dataframe.
   
-    ## Here below is provided an example of the outpu; 
-    ## if we want to see the mean and std of column 3 we call this command:
-    ## aggregated_df[1,1:3]. Please notice that column 1 and 2 are needed to
-    ## display subject and activity group.
-    
-    ## OUTPUT:
-    ## subject activity tBodyAcc-mean()-X.mean tBodyAcc-mean()-X.std
-    ## 1       1   LAYING              0.2215982             0.1689304
-    ## meaning that for subject 1 while doing the activity "STANDING", the mean and standard 
-    ## deviation of "tBodyAcc-mean()-X" are 0.2215982 and 0.1689304 respectively
-  
     nam<-colnames(subset_df)
     aggregated_df<-aggregate(subset_df[nam[3:length(nam)]], by=subset_df[c("subject","activity")], 
                              FUN=function(x) c(mean=mean(x), std=sd(x)) )
+    
+    ## Please notice that the “aggragate()” function, for each column of the input dataframe "subset_df" 
+    ## builds a 2 column matrix: one column containing the mean and the other the standard deviation.
+    ## In other words, for example, from the vector variable tBodyAcc-mean()-X, 
+    ## the aggregate() function creates a 2 column matrix named tBodyAcc-mean()-X. 
+    ## If you now call dim(ht) or names(ht), you will only display the matrix names,
+    ## that is to say tBodyAcc-mean()-X, tBodyAcc-mean()-Y tBodyAcc-mean()-Z etc, which may mislead and
+    ## make people think that there is no mean or standard deviation information in it. 
+    
+    ## But if you now print out values instead of names through commands like head(dt) or dt, 
+    ## you will notice that, for example tBodyAcc-mean()-X, actually contains both fields: 
+    ## tBodyAcc-mean()-X.mean and tBodyAcc-mean()-X.sd
+        
+    aggregated_df$train<-aggregated_df$train[,1]
     return(aggregated_df)
   
 }
