@@ -11,7 +11,7 @@ check_if_exists<-function(){
     
     if(!file.exists("./UCI HAR Dataset")) {dir.create("./UCI HAR Dataset")
                                          
-    ## Informs the user about what is being doing.
+    ## Informs users about what is being doing.
     message("")
     message("")                                           
     message("The UCI HAR folder does not exist in the working directory")
@@ -267,7 +267,7 @@ summarizedData<-function(subset_df){
     aggregated_df<-aggregate(subset_df[nam[3:length(nam)]], by=subset_df[c("subject","activity")], 
                              FUN=function(x) c(mean=mean(x), std=sd(x)) )
     
-    ## Please notice that the “aggragate()” function, for each column of the input dataframe "subset_df" 
+    ## Please notice that the "aggragate()" function, for each column of the input dataframe "subset_df" 
     ## builds a 2 column matrix: one column containing the mean and the other the standard deviation.
     ## In other words, for example, from the vector variable tBodyAcc-mean()-X, 
     ## the aggregate() function creates a 2 column matrix named tBodyAcc-mean()-X. 

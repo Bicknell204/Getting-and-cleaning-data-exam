@@ -1,7 +1,5 @@
-
-
-
-# 4. DATA DICTIONARY - UCI HAR DATASET
+# 1. DATA DICTIONARY - UCI HAR DATASET
+This files contains the codebook of various dataframes generated for the UCI HAR Dataset project.
 
 The whole project is made of 3 functions called one ofter the other in the following sequence:  
 -readData()  
@@ -17,9 +15,9 @@ This document is composed by 3 sections each of which describing the variables c
 If you are intersted only in the codebook of the final output (meaning the variables of the file "Output.txt"" uploaded in Coursera), please refer to the section "VARIABLES FROM summarizedData() OUTPUT" of this document.  
 
 
-# 4.1 : CODEBOOK OF VARIABLES IN  THE OUTPUT OF FUNCTION "readData()"
+# 2 : CODEBOOK OF VARIABLES IN  THE OUTPUT OF FUNCTION "readData()"
 ### VARIABLE NAME: "subject"
-TYPE: factor numecial variable  
+TYPE: factor numecial variable.   
 MEANING: It identifies the subject of the experiment  
 RANGE: numerical value in the range from 1 to 30  
   
@@ -101,7 +99,7 @@ This means that the x value of Body Acc variable in the time domain is called "t
 
 In this groups there isa total of 561 variables  
 
-### 4.1.1 INERTIAL SIGNALS VARIABLES (group of 1152 variables):
+### 3 INERTIAL SIGNALS VARIABLES (group of 1152 variables):
 In case the function "readData()" is called by setting the Inertial argument to TRUE, also the Inertial Signals will be loaded and  stored in the output dataframe in a total of additional 1152 columns in double precision format.   
 These columns are named as follows:  
 body_acc_x.1 ... body_acc_x.128  
@@ -116,12 +114,12 @@ total_acc_z.1 ... total_acc_z.128
 In other words, each observation from body_acc_x file is a 128 vector with column names body_acc_x.1, body_acc_x.2 ... up to body_acc_x.128.
 
 
-# 4.2: CODEBOOK OF VARIABLES FROM "extractMeanStdColumns ()" OUTPUT
+# 4: CODEBOOK OF VARIABLES FROM "extractMeanStdColumns ()" OUTPUT
 The output of "extractMeanStdColumns()" function is a subset of the output from the "readData()". 
 Therefore, the data dictionary follows the same rules previously described.  
 The subset includes all and only the columns with the mean and standard deviation information, along with the 3 columns: "subject"", "activity" and "train".  
 
-A complete list of variables included in this dataframe is reported below. For the meaning of each, please refer ro the above section.
+A complete list of variables included in this dataframe is reported below. For the meaning of each, please refer ro the above section. The menaing of each has already been explained in section 2
 
 subject  
 activity   
@@ -272,7 +270,7 @@ If you now call dim(ht) or names(ht), you will only display the matrix names, th
 But if you now print out values instead of names through commands like head(dt) or dt you will notice that, for example the matrix "tBodyAcc- mean()-X", actually contains both fields: "tBodyAcc-mean()-X.mean" and "tBodyAcc-mean()-X.sd"
 The exhaustive list of variables is reported in Appendix 3.
 
-The exhaustive list of variables si as follows: 
+The exhaustive list of variables, already explained in section 2, si as follows: 
 subject: numeric variable ranging from 1:30  
 activity: categrical variable indicating the activity 
 train: boolean variable indicating if the subject belongs to the training ortest group.  
