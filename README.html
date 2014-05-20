@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>1. INTRODUCTION</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<h1>1. INTRODUCTION</h1>
+
+<p>The following sequence of function calls allows accomplishing all tasks required by the project.</p>
+
+<p>1)  check_if_exists()</p>
+
+<p>2)  original_df &lt;- readData(&ldquo;UCI HAR Dataset&rdquo;, FALSE)</p>
+
+<p>3)  subset_df &lt;- extractMeanStdColumns(original_df)</p>
+
+<p>4)  summarized_df &lt;- summarizedData(subset_df)</p>
+
+<p>All these functions have to be run in the indicated sequence order to obtain the file &ldquo;output.txt&rdquo; as it has been uploaded in the coursera web page. Also notice that the input for the &ldquo;extractMeanStdColumns()&rdquo; function has to be the output of &ldquo;readData()&rdquo; function and that the input for &ldquo;summarizedData()&rdquo; has to be the output of &ldquo;extractMeanStdColumns()&rdquo; function.
+Instead of creating an overall main function containing this sequence with the correct inputs, I prefer to call each function separately from the command line in order to have access to outputs from &ldquo;readData()&rdquo; function and from &ldquo;extractMeanStdColumns()&rdquo;. 
+Additionally, in this way, final user is provided with the flexibility to decide whether loading the Inertial Signals files or not by setting the second argument of &ldquo;readData()&rdquo; function to TRUE. In case she does, she can access to this &ldquo;raw&rdquo; data by accessing specific columns of the &ldquo;readData()&rdquo; output which would not be accessible if I grouped the 4 above mentioned functions in a overall main function.</p>
+
+<p>If the UCI HAR Dataset directory does not exist in the local computer, an internet connection is needed for the check_if_exists() function to programmatically download the source files and create the UCI HAR Data set folder in the local working directory.</p>
+
+<h1>2. STRUCTURE OF &ldquo;run_analysis.R&rdquo; FILE</h1>
+
+<p>All functions are defined in the attached &ldquo;run_analysis.R&rdquo; and described, at an high level, here below.</p>
+
+<p>Besides the 4 above mentioned main functions, the  &ldquo;run_analysis.R&rdquo; also contains other 3 auxiliary functions: &ldquo;firstLevelData()&rdquo;, &ldquo;readInertialData()&rdquo; and &ldquo;replaceActivityName()&rdquo;. The first 2 are called by the &ldquo;readData()&rdquo; function. The third one is called by the &ldquo;firstLevelData()&rdquo;.
+The resulting flow in the function stack is as follow: </p>
+
+<ol>
+<li> check_if_exixts()<br/></li>
+<li> readData()<br/>
+2.1.    firstLevelData()<br/>
+2.1.1.  replaceActivityName()<br/>
+2.2.    readInertialData()<br/></li>
+<li> extractMeanStdColumns()<br/></li>
+<li> summarizedData()<br/></li>
+</ol>
+
+<p>The below scheme gives a high level description of what each of the above functions does. More details for each function are provided later in this read me file.  </p>
+
+<p>check_if_exixts():  Checks if all necessary data is stored in the local computer and creates the necessary environment in case it is needed  </p>
+
+<p>readData():         Reads data from the UCI HAR Dataset directory and build the overall dataframe according to the requirements specified in the             arguments (meaning that data from the Inertial Signals folder are loaded only upon request) </p>
+
+<p>firstLevelData():   Builds a dataframe containing the subject, activity and main sensorial data (meaning not the Inertial Signal data) either     from test or from train folder depending on the argument settings.</p>
+
+<p>readInertialData(): Columnwise attaches data from Inertial Signal folder to the input dataframe and names columns in a descriptive way</p>
+
+<p>replaceActivityName():  Replaces numeric activity indicators with descriptive string labels according to the table in the &ldquo;features.txt&rdquo; file</p>
+
+<p>extractMeanStdColumns():    Extracts from the overall dataframe those columns containing data on either the mean or standard deviation of the variables of interest.</p>
+
+<p>summarizedData():   Collapse the input dataframe into a summarizing 30x6 dataframe grouped by subject and carried out activity calculating the mean and standard deviation of each variable of input dataframe</p>
+
+<h1>3. TASKS REQUIRED BY THE PROJECT</h1>
+
+<h3>3.1 Preliminary step: &ldquo;check if it exists&rdquo;</h3>
+
+<p>The &ldquo;chech_if_exists()&rdquo; function checks whether the &ldquo;UCI HAR Dataset&rdquo; directory exists in the working directory.</p>
+
+<p>If the directory exists, the function just quits without doing anything since it assumes that the existing &ldquo;UCI HAR Dataset&rdquo; directory already contains all the files and sub directories as when recently downloaded and unzipped. </p>
+
+<p>If the &ldquo;UCI HAR Dataset&rdquo; does not exist, the &ldquo;chech_if_exists()&rdquo; downloads the source zipped file from the link provided in the project instructions: &ldquo;<a href="https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip">https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip</a>&rdquo; 
+Once downloading is completed, the function unzips the downloaded file in the working directory and creates the &ldquo;UCI HAR DATASET&rdquo; folder with all files and subfolders needed for the project.</p>
+
+<h3>3.2  Merges the training and the test sets to create one data set.</h3>
+
+<p>The overall data frame is build by calling the function &ldquo;readData()&rdquo; as follows:</p>
+
+<p>original_df-readData(main_folder, inertial)</p>
+
+<p>where both arguments are optional:</p>
+
+<p>-main_folder by default  is set to &ldquo;UCI HAR Dataset&rdquo;, that is to say the folder name containing all the files and subfolders needed for the project
+-inertial is an logical argument that by default is set to FALSE and indicates whether files within sub folders &ldquo;Inertial Signals&rdquo; have to be loaded.</p>
+
+<p>The output of &ldquo;readData()&rdquo; is a data frame containing the 10.299 observations from both &ldquo;train&rdquo; and &ldquo;test&rdquo; data &ldquo;rbinded&rdquo; together. As explained in the next, the number of variables (columns) of the output dataframe depends on the &ldquo;inertial&rdquo; argument setting. </p>
+
+<p>Regardless the inertial argument setting, in the output data frame there will be 2 columns named &ldquo;subject&rdquo; and &ldquo;activity&rdquo; which respectively identify both the person being observed and the activity carried out by the observed person. These data are loaded from the files </p>
+
+<p>&ldquo;   &quot;subject_train.txt&rdquo;, 
+&ldquo;   &quot;y_train.txt&rdquo;, </p>
+
+<p>and </p>
+
+<p>&ldquo;   &quot;subject_test.txt&rdquo; 
+&ldquo;   &quot;y_test.txt&rdquo; </p>
+
+<p>stored in the &ldquo;train&rdquo; and &ldquo;test&rdquo; subdirectories of &ldquo;UCI HAR Dataset&rdquo; main directory.</p>
+
+<p>In order to track if a given row comes from a train or a test subject, the column &ldquo;train&rdquo; is added to the resulting dataframe: in those rows with data from a &ldquo;test&rdquo; subject, this field is set to 0; in those rows with data from a &ldquo;train&rdquo; subject, this field is set to 1.</p>
+
+<p>By leaving  the &ldquo;inertial&rdquo; argument to FALSE, the &ldquo;readData()&rdquo; function will load exclusively subject, activity and basic sensorial information leaving out the Inertial Signals files. The output will be a 10299 observations dataframe described by 564 columns corresponding to the 3 above mentioned columns (&ldquo;subject&rdquo;, &ldquo;activity&rdquo; and &ldquo;train&rdquo;) and the 561 columns contained in each of &ldquo;X&rdquo; files in &ldquo;train&rdquo; and &ldquo;test&rdquo; directories. </p>
+
+<p>If inertial argument is TRUE, the &ldquo;readData()&rdquo; function will build a dataset that will also include data from Inertial Signals files. This option is available for those who need to work on Inertial Signals. It is recommend to use this option only onto powerful computers since the output is a gigantic 10299x1716 dataframe. 
+Of the 1716 columns, 564 are the same as in the inertial argument= FALSE case. The additional 1152 columns are the 128 columns of each of the 9 files stored in the Inertial Signals subfolders. This 128x9=1152 columns are &ldquo;cbinded&rdquo; to the dataframe.</p>
+
+<p>The column names for the basic sensorial data are the same as in the &ldquo;feature.txt&rdquo; files. On the other hand, the column names for the Inertial Signals are built as the combination of the source file name and a numeric vector 1:128. In other words, the 128 columns from (for instance) the &ldquo;body_acc_x_test.txt&rdquo; are cbinded to the output dataframe and named &ldquo;body_acc_x.1&rdquo;, &ldquo;body_acc_x.2&rdquo;&ldquo;. &quot;body_acc_x.128&rdquo;. The same applies to all other files from Inertial Signals. It is worth to notice that data from &ldquo;test&rdquo; and &ldquo;train&rdquo; subjects are distinguished through the column &ldquo;train&rdquo; which in one case is set to 0 and in the other case is set to 1. </p>
+
+<h3>3.3 Extracts only the measurements on the mean and standard deviation for each measurement.</h3>
+
+<p>The subsetting operation is performed by calling the function:</p>
+
+<p>subset_df &lt;- extractMeanStdColumns(original_df)</p>
+
+<p>where &ldquo;original_df&rdquo; is the output dataframe from the previously described &ldquo;readData()&rdquo; function.</p>
+
+<p>The &ldquo;extractMeanStdColumns()&rdquo; function creates a new dataframe extracting from the original one the 66 columns containing mean and standard deviation information.
+Please, notice that the &ldquo;&quot;meanFreq()&rdquo; columns are not extracted since I believe are not required.
+The output dataframe will also keep the &ldquo;subject&rdquo;, &ldquo;activity&rdquo; and &ldquo;train&rdquo; columns from the original data frame.</p>
+
+<p>As a result, the output &ldquo;subset_df &rdquo; will be a 10.229 x 69 data frame </p>
+
+<h3>3.4 Uses descriptive activity names to name the activities in the data set</h3>
+
+<p>This task is accomplished through the &ldquo;replaceActivityName()&rdquo; function called while running the &ldquo;firstLevelData()&rdquo; function which in turn is a function called by &ldquo;readData()&rdquo; function.</p>
+
+<p>The &ldquo;replaceActivityName()&rdquo; function, replaces numeric values appearing into the &ldquo;activity&rdquo; column of the main dataframe with descriptive labels  according to the &ldquo;activity_labels.txt&rdquo; file.</p>
+
+<h3>3.5 Appropriately labels the data set with descriptive activity names.</h3>
+
+<p>Descriptive labels are given to each column in the building phase of the dataframe.
+More in details, while running the &ldquo;readData()&rdquo; function, basic sensory columns are named accordingly to the &ldquo;features.txt&rdquo; file. 
+If Inertial Signals data are included, the additional 1152 columns are named through a quite descriptive codification which is the result of the combination of the file name where data is stored and the numeric vector with values 1:128.
+The 128 values of each observation from (for instance) &ldquo;body_acc_x&rdquo; are stored in the output dataframe in 128 columns named &ldquo;body_acc_x.1&rdquo;, &ldquo;body_acc_x.2&rdquo;&ldquo;. &quot;body_acc_x.128&rdquo; </p>
+
+<h3>3.6 Creates a second, independent tidy data set with the average of each variable for each activity and each subject.</h3>
+
+<p>This task is accomplished by calling the function:</p>
+
+<p>summarized_df &lt;- summarizedData(subset_df)</p>
+
+<p>where &ldquo;subset_df&rdquo; is likely to be the subset dataframe as created through the &ldquo;extractMeanStdColumns()&rdquo; function described in point 3. But actually, this function can be also applied to the complete dataframe created through the &ldquo;readData()&rdquo; function described in point 1.</p>
+
+<p>For each column of the input dataframe, the function aggregates data according to all activity (6) levels and all subjects (30). Therefore the output dataframe will contain 30x6=180 observations. While the original 10299 are collapsed into the 180 rows, the mean and the standard deviation of each column of the input dataframe are calculated and stored into the output dataframe. </p>
+
+</body>
+
+</html>
+

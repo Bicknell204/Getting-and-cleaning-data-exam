@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>1. INTRODUCTION</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<h1>1. INTRODUCTION</h1>
+
+<p>The following sequence of function calls allows accomplishing all tasks required by the project.</p>
+
+<p>1)  check_if_exists()</p>
+
+<p>2)  original_df &lt;- readData(&ldquo;UCI HAR Dataset&rdquo;, FALSE)</p>
+
+<p>3)  subset_df &lt;- extractMeanStdColumns(original_df)</p>
+
+<p>4)  summarized_df &lt;- summarizedData(subset_df)</p>
+
+<p>All these functions have to be run in the indicated sequence order to obtain the file &ldquo;output.txt&rdquo; as it has been uploaded in the coursera web page. Also notice that the input for the &ldquo;extractMeanStdColumns()&rdquo; function has to be the output of &ldquo;readData()&rdquo; function and that the input for &ldquo;summarizedData()&rdquo; has to be the output of &ldquo;extractMeanStdColumns()&rdquo; function.
+Instead of creating an overall main function containing this sequence with the correct inputs, I prefer to call each function separately from the command line in order to have access to outputs from &ldquo;readData()&rdquo; function and from &ldquo;extractMeanStdColumns()&rdquo;. 
+Additionally, in this way, final user is provided with the flexibility to decide whether loading the Inertial Signals files or not by setting the second argument of &ldquo;readData()&rdquo; function to TRUE. In case she does, she can access to this &ldquo;raw&rdquo; data by accessing specific columns of the &ldquo;readData()&rdquo; output which would not be accessible if I grouped the 4 above mentioned functions in a overall main function.</p>
+
+<p>If the UCI HAR Dataset directory does not exist in the local computer, an internet connection is needed for the check_if_exists() function to programmatically download the source files and create the UCI HAR Data set folder in the local working directory.</p>
+
+<h1>2. STRUCTURE OF &ldquo;run_analysis.R&rdquo; FILE</h1>
+
+<p>All functions are defined in the attached &ldquo;run_analysis.R&rdquo; and described, at an high level, here below.</p>
+
+<p>Besides the 4 above mentioned main functions, the  &ldquo;run_analysis.R&rdquo; also contains other 3 auxiliary functions: &ldquo;firstLevelData()&rdquo;, &ldquo;readInertialData()&rdquo; and &ldquo;replaceActivityName()&rdquo;. The first 2 are called by the &ldquo;readData()&rdquo; function. The third one is called by the &ldquo;firstLevelData()&rdquo;.
+The resulting flow in the function stack is as follow: </p>
+
+<ol>
+<li> check_if_exixts()<br/></li>
+<li> readData()<br/>
+2.1.    firstLevelData()<br/>
+2.1.1.  replaceActivityName()<br/>
+2.2.    readInertialData()<br/></li>
+<li> extractMeanStdColumns()<br/></li>
+<li> summarizedData()<br/></li>
+</ol>
+
+<p>The below scheme gives a high level description of what each of the above functions does. More details for each function are provided later in this read me file.  </p>
+
+<p>check_if_exixts():  Checks if all necessary data is stored in the local computer and creates the necessary environment in case it is needed  </p>
+
+<p>readData():         Reads data from the UCI HAR Dataset directory and build the overall dataframe according to the requirements specified in the             arguments (meaning that data from the Inertial Signals folder are loaded only upon request) </p>
+
+<p>firstLevelData():   Builds a dataframe containing the subject, activity and main sensorial data (meaning not the Inertial Signal data) either     from test or from train folder depending on the argument settings.</p>
+
+<p>readInertialData(): Columnwise attaches data from Inertial Signal folder to the input dataframe and names columns in a descriptive way</p>
+
+<p>replaceActivityName():  Replaces numeric activity indicators with descriptive string labels according to the table in the &ldquo;features.txt&rdquo; file</p>
+
+<p>extractMeanStdColumns():    Extracts from the overall dataframe those columns containing data on either the mean or standard deviation of the variables of interest.</p>
+
+<p>summarizedData():   Collapse the input dataframe into a summarizing 30x6 dataframe grouped by subject and carried out activity calculating the mean and standard deviation of each variable of input dataframe</p>
+
+<h1>3. TASKS REQUIRED BY THE PROJECT</h1>
+
+<h3>3.1 Preliminary step: &ldquo;check if it exists&rdquo;</h3>
+
+<p>The &ldquo;chech_if_exists()&rdquo; function checks whether the &ldquo;UCI HAR Dataset&rdquo; directory exists in the working directory.</p>
+
+<p>If the directory exists, the function just quits without doing anything since it assumes that the existing &ldquo;UCI HAR Dataset&rdquo; directory already contains all the files and sub directories as when recently downloaded and unzipped. </p>
+
+<p>If the &ldquo;UCI HAR Dataset&rdquo; does not exist, the &ldquo;chech_if_exists()&rdquo; downloads the source zipped file from the link provided in the project instructions: &ldquo;<a href="https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip">https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip</a>&rdquo; 
+Once downloading is completed, the function unzips the downloaded file in the working directory and creates the &ldquo;UCI HAR DATASET&rdquo; folder with all files and subfolders needed for the project.</p>
+
+<h3>3.2  Merges the training and the test sets to create one data set.</h3>
+
+<p>The overall data frame is build by calling the function &ldquo;readData()&rdquo; as follows:</p>
+
+<p>original_df-readData(main_folder, inertial)</p>
+
+<p>where both arguments are optional:</p>
+
+<p>-main_folder by default  is set to &ldquo;UCI HAR Dataset&rdquo;, that is to say the folder name containing all the files and subfolders needed for the project
+-inertial is an logical argument that by default is set to FALSE and indicates whether files within sub folders &ldquo;Inertial Signals&rdquo; have to be loaded.</p>
+
+<p>The output of &ldquo;readData()&rdquo; is a data frame containing the 10.299 observations from both &ldquo;train&rdquo; and &ldquo;test&rdquo; data &ldquo;rbinded&rdquo; together. As explained in the next, the number of variables (columns) of the output dataframe depends on the &ldquo;inertial&rdquo; argument setting. </p>
+
+<p>Regardless the inertial argument setting, in the output data frame there will be 2 columns named &ldquo;subject&rdquo; and &ldquo;activity&rdquo; which respectively identify both the person being observed and the activity carried out by the observed person. These data are loaded from the files </p>
+
+<p>&ldquo;   &quot;subject_train.txt&rdquo;, 
+&ldquo;   &quot;y_train.txt&rdquo;, </p>
+
+<p>and </p>
+
+<p>&ldquo;   &quot;subject_test.txt&rdquo; 
+&ldquo;   &quot;y_test.txt&rdquo; </p>
+
+<p>stored in the &ldquo;train&rdquo; and &ldquo;test&rdquo; subdirectories of &ldquo;UCI HAR Dataset&rdquo; main directory.</p>
+
+<p>In order to track if a given row comes from a train or a test subject, the column &ldquo;train&rdquo; is added to the resulting dataframe: in those rows with data from a &ldquo;test&rdquo; subject, this field is set to 0; in those rows with data from a &ldquo;train&rdquo; subject, this field is set to 1.</p>
+
+<p>By leaving  the &ldquo;inertial&rdquo; argument to FALSE, the &ldquo;readData()&rdquo; function will load exclusively subject, activity and basic sensorial information leaving out the Inertial Signals files. The output will be a 10299 observations dataframe described by 564 columns corresponding to the 3 above mentioned columns (&ldquo;subject&rdquo;, &ldquo;activity&rdquo; and &ldquo;train&rdquo;) and the 561 columns contained in each of &ldquo;X&rdquo; files in &ldquo;train&rdquo; and &ldquo;test&rdquo; directories. </p>
+
+<p>If inertial argument is TRUE, the &ldquo;readData()&rdquo; function will build a dataset that will also include data from Inertial Signals files. This option is available for those who need to work on Inertial Signals. It is recommend to use this option only onto powerful computers since the output is a gigantic 10299x1716 dataframe. 
+Of the 1716 columns, 564 are the same as in the inertial argument= FALSE case. The additional 1152 columns are the 128 columns of each of the 9 files stored in the Inertial Signals subfolders. This 128x9=1152 columns are &ldquo;cbinded&rdquo; to the dataframe.</p>
+
+<p>The column names for the basic sensorial data are the same as in the &ldquo;feature.txt&rdquo; files. On the other hand, the column names for the Inertial Signals are built as the combination of the source file name and a numeric vector 1:128. In other words, the 128 columns from (for instance) the &ldquo;body_acc_x_test.txt&rdquo; are cbinded to the output dataframe and named &ldquo;body_acc_x.1&rdquo;, &ldquo;body_acc_x.2&rdquo;&ldquo;. &quot;body_acc_x.128&rdquo;. The same applies to all other files from Inertial Signals. It is worth to notice that data from &ldquo;test&rdquo; and &ldquo;train&rdquo; subjects are distinguished through the column &ldquo;train&rdquo; which in one case is set to 0 and in the other case is set to 1. </p>
+
+<h3>3.3 Extracts only the measurements on the mean and standard deviation for each measurement.</h3>
+
+<p>The subsetting operation is performed by calling the function:</p>
+
+<p>subset_df &lt;- extractMeanStdColumns(original_df)</p>
+
+<p>where &ldquo;original_df&rdquo; is the output dataframe from the previously described &ldquo;readData()&rdquo; function.</p>
+
+<p>The &ldquo;extractMeanStdColumns()&rdquo; function creates a new dataframe extracting from the original one the 66 columns containing mean and standard deviation information.
+Please, notice that the &ldquo;&quot;meanFreq()&rdquo; columns are not extracted since I believe are not required.
+The output dataframe will also keep the &ldquo;subject&rdquo;, &ldquo;activity&rdquo; and &ldquo;train&rdquo; columns from the original data frame.</p>
+
+<p>As a result, the output &ldquo;subset_df &rdquo; will be a 10.229 x 69 data frame </p>
+
+<h3>3.4 Uses descriptive activity names to name the activities in the data set</h3>
+
+<p>This task is accomplished through the &ldquo;replaceActivityName()&rdquo; function called while running the &ldquo;firstLevelData()&rdquo; function which in turn is a function called by &ldquo;readData()&rdquo; function.</p>
+
+<p>The &ldquo;replaceActivityName()&rdquo; function, replaces numeric values appearing into the &ldquo;activity&rdquo; column of the main dataframe with descriptive labels  according to the &ldquo;activity_labels.txt&rdquo; file.</p>
+
+<h3>3.5 Appropriately labels the data set with descriptive activity names.</h3>
+
+<p>Descriptive labels are given to each column in the building phase of the dataframe.
+More in details, while running the &ldquo;readData()&rdquo; function, basic sensory columns are named accordingly to the &ldquo;features.txt&rdquo; file. 
+If Inertial Signals data are included, the additional 1152 columns are named through a quite descriptive codification which is the result of the combination of the file name where data is stored and the numeric vector with values 1:128.
+The 128 values of each observation from (for instance) &ldquo;body_acc_x&rdquo; are stored in the output dataframe in 128 columns named &ldquo;body_acc_x.1&rdquo;, &ldquo;body_acc_x.2&rdquo;&ldquo;. &quot;body_acc_x.128&rdquo; </p>
+
+<h3>3.6 Creates a second, independent tidy data set with the average of each variable for each activity and each subject.</h3>
+
+<p>This task is accomplished by calling the function:</p>
+
+<p>summarized_df &lt;- summarizedData(subset_df)</p>
+
+<p>where &ldquo;subset_df&rdquo; is likely to be the subset dataframe as created through the &ldquo;extractMeanStdColumns()&rdquo; function described in point 3. But actually, this function can be also applied to the complete dataframe created through the &ldquo;readData()&rdquo; function described in point 1.</p>
+
+<p>For each column of the input dataframe, the function aggregates data according to all activity (6) levels and all subjects (30). Therefore the output dataframe will contain 30x6=180 observations. While the original 10299 are collapsed into the 180 rows, the mean and the standard deviation of each column of the input dataframe are calculated and stored into the output dataframe. </p>
+
+<h1>4. DATA DICTIONARY - UCI HAR DATASET</h1>
+
+<p>The whole project is made of 3 functions called one ofter the other in the following sequence:<br/>
+-readData()<br/>
+-extractMeanStdColumns()<br/>
+-summarizedData()  </p>
+
+<p>The output of readData() is used as an input for extractMeanStdColumns() function.<br/>
+The output of extractMeanStdColumns() function si the input for summarizedData() function.<br/>
+The output of summarizedData()  is teh final output which has been uploaded in Coursera web page.  </p>
+
+<p>This document is composed by 3 sections each of which describing the variables contained in output of the 3 above mentioned functions.  </p>
+
+<p>If you are intersted only in the codebook of the final output (meaning the variables of the file &ldquo;Output.txt&rdquo;&ldquo; uploaded in Coursera), please refer to the section &quot;VARIABLES FROM summarizedData() OUTPUT&rdquo; of this document.  </p>
+
+<h1>4.1 : CODEBOOK OF VARIABLES IN  THE OUTPUT OF FUNCTION &ldquo;readData()&rdquo;</h1>
+
+<h3>VARIABLE NAME: &ldquo;subject&rdquo;</h3>
+
+<p>TYPE: factor numecial variable<br/>
+MEANING: It identifies the subject of the experiment<br/>
+RANGE: numerical value in the range from 1 to 30  </p>
+
+<h3>VARIABLE NAME: &ldquo;activity&rdquo;</h3>
+
+<p>TYPE: factor string variable<br/>
+MEANING: It identifies the activity carried out by the subject.<br/>
+RANGE: one of the following 6 values:<br/>
+ -WALKING<br/>
+ -WALKING_UPSTAIRS<br/>
+ -WALKING_DOWNSTAIRS<br/>
+ -SITTING<br/>
+ -STANDING<br/>
+ -LAYING  </p>
+
+<h3>VARIABLE NAME: &ldquo;train&rdquo;</h3>
+
+<p>TYPE: 2 values variable (either 0 or 1)<br/>
+MEANING: It identifies if the subject belongs to &ldquo;train&rdquo; or &ldquo;test&rdquo; group
+RANGE:
+ -0: subject belongs to test group 
+ -1: subject belongs to train group</p>
+
+<h3>FEATURE VARIABLES (group of 561 variables):</h3>
+
+<p>There are 561 variables used to measure different features in the time and frequency domains.<br/>
+Features whose name starts with an f are in the frequency domain.<br/>
+Features whose name starts with a t are in the time domain.<br/>
+Each of the following feature has an X, Y and Z components.<br/>
+Values are numeric in double precision format. </p>
+
+<p>The measured variables are:. 
+-Body acceleration (in both Time and Frequency domains)<br/>
+-Gravity Acceleration (in Time domain only)<br/>
+-Body acceleration Jerk (in both Time and Frequency domains)<br/>
+-Body Angular Speed (in both Time and Frequency domains)<br/>
+-Body Angular Accelleration (in Time domain only)<br/>
+-Body Acceleration Magnitude (in both Time and Frequency domains)<br/>
+-Gravity Accelleration Magnitude (in Time domain only)<br/>
+-Body Accelleration Jerk Magnitude (in both Time and Frequency domains)<br/>
+-Body Angular Speed Magnitude (in both Time and Frequency domains)<br/>
+-Body Angular Acceleration Magnitude (in both Time and Frequency domains)  </p>
+
+<p>In parentesis the domain of reference is indicated.<br/>
+&ldquo;in Time domain only&rdquo; means that there is no frequancy correspondant of that variable.  </p>
+
+<p>&ldquo;in both Time and Frequency domains&rdquo; means that of that variable it exists both version:<br/>
+-the t version<br/>
+-the f version obtaind applying a Fast Fourier transformation to its t correspondant  </p>
+
+<p>For instance:<br/>
+of the variable Body Accelleration, there will be 2 versions:<br/>
+-tBodyAcc<br/>
+-fBodyAcc  </p>
+
+<p>while of the variable Gravity Acceleration, there will be only the Time version:<br/>
+tGravAcc</p>
+
+<p>Of each of the above mentioned variables, the data set includes the following values:<br/>
+-mean: mean value<br/>
+-std: standard deviation<br/>
+-mad: median absolute value 
+-max: largest value in the array<br/>
+-min: smalles value in the array<br/>
+-sma: signal magnitude area<br/>
+-energy: average sum of squares<br/>
+-iqr: inetrquartile range<br/>
+-entrop: signal entropy<br/>
+-arCoeff: autoregression coefficient<br/>
+-correlation: correlation coefficient<br/>
+-maxFreqIng: largest frequency component<br/>
+-manFreq: Frequency signal weighted average<br/>
+-skewness: frequency signal Skewness<br/>
+-kurtosis: frequancy signal Kurtosis<br/>
+-energyBand: Energy of a frequency interval<br/>
+-angle: Angle between two vectors  </p>
+
+<p>Each  variable is measured in their 3 axis component.<br/>
+This means that the x value of Body Acc variable in the time domain is called &ldquo;tBodyAcc-x&rdquo; while the correspondant variable in the f domain is called &ldquo;tBodyAcc-y&rdquo;</p>
+
+<p>In this groups there isa total of 561 variables  </p>
+
+<h3>4.1.1 INERTIAL SIGNALS VARIABLES (group of 1152 variables):</h3>
+
+<p>In case the function &ldquo;readData()&rdquo; is called by setting the Inertial argument to TRUE, also the Inertial Signals will be loaded and  stored in the output dataframe in a total of additional 1152 columns in double precision format.<br/>
+These columns are named as follows:<br/>
+body_acc_x.1 &hellip; body_acc_x.128<br/>
+body_acc_y.1 &hellip; body_acc_y.128<br/>
+body_acc_z.1 &hellip; body_acc_z.128<br/>
+body_gyro_x.1 &hellip; body_gyro_x.128<br/>
+body_gyro_y.1 &hellip; body_gyro_y.128<br/>
+body_gyro_z.1 &hellip; body_gyro_z.128<br/>
+total_acc_x.1 &hellip; total_acc_x.128<br/>
+total_acc_y.1 &hellip; total_acc_y.128<br/>
+total_acc_z.1 &hellip; total_acc_z.128<br/>
+In other words, each observation from body_acc_x file is a 128 vector with column names body_acc_x.1, body_acc_x.2 &hellip; up to body_acc_x.128.</p>
+
+<h1>4.2: CODEBOOK OF VARIABLES FROM &ldquo;extractMeanStdColumns ()&rdquo; OUTPUT</h1>
+
+<p>The output of &ldquo;extractMeanStdColumns()&rdquo; function is a subset of the output from the &ldquo;readData()&rdquo;. 
+Therefore, the data dictionary follows the same rules previously described.<br/>
+The subset includes all and only the columns with the mean and standard deviation information, along with the 3 columns: &ldquo;subject&rdquo;&ldquo;, &quot;activity&rdquo; and &ldquo;train&rdquo;.  </p>
+
+<p>A complete list of variables included in this dataframe is reported below. For the meaning of each, please refer ro the above section.</p>
+
+<p>subject<br/>
+activity<br/>
+train 
+tBodyAcc-mean()-X.mean<br/>
+tBodyAcc-mean()-Y.mean<br/>
+tBodyAcc-mean()-Z.mean<br/>
+tBodyAcc-std()-X.mean<br/>
+tBodyAcc-std()-Y.mean<br/>
+tBodyAcc-std()-Z.mean<br/>
+tGravityAcc-mean()-X.mean<br/>
+tGravityAcc-mean()-Y.mean<br/>
+tGravityAcc-mean()-Z.mean<br/>
+tGravityAcc-std()-X.mean<br/>
+tGravityAcc-std()-Y.mean<br/>
+tGravityAcc-std()-Z.mean<br/>
+tBodyAccJerk-mean()-X.mean<br/>
+tBodyAccJerk-mean()-Y.mean<br/>
+tBodyAccJerk-mean()-Z.mean<br/>
+tBodyAccJerk-std()-X.mean<br/>
+tBodyAccJerk-std()-Y.mean<br/>
+tBodyAccJerk-std()-Z.mean<br/>
+tBodyGyro-mean()-X.mean<br/>
+tBodyGyro-mean()-Y.mean<br/>
+tBodyGyro-mean()-Z.mean<br/>
+tBodyGyro-std()-X.mean<br/>
+tBodyGyro-std()-Y.mean<br/>
+tBodyGyro-std()-Z.mean<br/>
+tBodyGyroJerk-mean()-X.mean<br/>
+tBodyGyroJerk-mean()-Y.mean<br/>
+tBodyGyroJerk-mean()-Z.mean<br/>
+tBodyGyroJerk-std()-X.mean<br/>
+tBodyGyroJerk-std()-Y.mean<br/>
+tBodyGyroJerk-std()-Z.mean<br/>
+tBodyAccMag-mean().mean<br/>
+tBodyAccMag-std().mean<br/>
+tGravityAccMag-mean().mean<br/>
+tGravityAccMag-std().mean<br/>
+tBodyAccJerkMag-mean().mean<br/>
+tBodyAccJerkMag-std().mean<br/>
+tBodyGyroMag-mean().mean<br/>
+tBodyGyroMag-std().mean<br/>
+tBodyGyroJerkMag-mean().mean<br/>
+tBodyGyroJerkMag-std().mean<br/>
+fBodyAcc-mean()-X.mean<br/>
+fBodyAcc-mean()-Y.mean<br/>
+fBodyAcc-mean()-Z.mean<br/>
+fBodyAcc-std()-X.mean<br/>
+fBodyAcc-std()-Y.mean<br/>
+fBodyAcc-std()-Z.mean<br/>
+fBodyAccJerk-mean()-X.mean<br/>
+fBodyAccJerk-mean()-Y.mean<br/>
+fBodyAccJerk-mean()-Z.mean<br/>
+fBodyAccJerk-std()-X.mean<br/>
+fBodyAccJerk-std()-Y.mean<br/>
+fBodyAccJerk-std()-Z.mean<br/>
+fBodyGyro-mean()-X.mean<br/>
+fBodyGyro-mean()-Y.mean<br/>
+fBodyGyro-mean()-Z.mean<br/>
+fBodyGyro-std()-X.mean<br/>
+fBodyGyro-std()-Y.mean<br/>
+fBodyGyro-std()-Z.mean<br/>
+fBodyAccMag-mean().mean<br/>
+fBodyAccMag-std().mean<br/>
+fBodyBodyAccJerkMag-mean().mean<br/>
+fBodyBodyAccJerkMag-std().mean<br/>
+fBodyBodyGyroMag-mean().mean<br/>
+fBodyBodyGyroMag-std().mean<br/>
+fBodyBodyGyroJerkMag-mean().mean<br/>
+fBodyBodyGyroJerkMag-std().mean<br/>
+tBodyAcc-mean()-X.std<br/>
+tBodyAcc-mean()-Y.std<br/>
+tBodyAcc-mean()-Z.std<br/>
+tBodyAcc-std()-X.std<br/>
+tBodyAcc-std()-Y.std<br/>
+tBodyAcc-std()-Z.std<br/>
+tGravityAcc-mean()-X.std<br/>
+tGravityAcc-mean()-Y.std<br/>
+tGravityAcc-mean()-Z.std<br/>
+tGravityAcc-std()-X.std<br/>
+tGravityAcc-std()-Y.std<br/>
+tGravityAcc-std()-Z.std<br/>
+tBodyAccJerk-mean()-X.std<br/>
+tBodyAccJerk-mean()-Y.std<br/>
+tBodyAccJerk-mean()-Z.std<br/>
+tBodyAccJerk-std()-X.std<br/>
+tBodyAccJerk-std()-Y.std<br/>
+tBodyAccJerk-std()-Z.std<br/>
+tBodyGyro-mean()-X.std<br/>
+tBodyGyro-mean()-Y.std<br/>
+tBodyGyro-mean()-Z.std<br/>
+tBodyGyro-std()-X.std<br/>
+tBodyGyro-std()-Y.std<br/>
+tBodyGyro-std()-Z.std<br/>
+tBodyGyroJerk-mean()-X.std<br/>
+tBodyGyroJerk-mean()-Y.std<br/>
+tBodyGyroJerk-mean()-Z.std<br/>
+tBodyGyroJerk-std()-X.std<br/>
+tBodyGyroJerk-std()-Y.std<br/>
+tBodyGyroJerk-std()-Z.std<br/>
+tBodyAccMag-mean().std<br/>
+tBodyAccMag-std().std<br/>
+tGravityAccMag-mean().std<br/>
+tGravityAccMag-std().std<br/>
+tBodyAccJerkMag-mean().std<br/>
+tBodyAccJerkMag-std().std<br/>
+tBodyGyroMag-mean().std<br/>
+tBodyGyroMag-std().std<br/>
+tBodyGyroJerkMag-mean().std<br/>
+tBodyGyroJerkMag-std().std<br/>
+fBodyAcc-mean()-X.std<br/>
+fBodyAcc-mean()-Y.std<br/>
+fBodyAcc-mean()-Z.std<br/>
+fBodyAcc-std()-X.std<br/>
+fBodyAcc-std()-Y.std<br/>
+fBodyAcc-std()-Z.std<br/>
+fBodyAccJerk-mean()-X.std<br/>
+fBodyAccJerk-mean()-Y.std<br/>
+fBodyAccJerk-mean()-Z.std<br/>
+fBodyAccJerk-std()-X.std<br/>
+fBodyAccJerk-std()-Y.std<br/>
+fBodyAccJerk-std()-Z.std<br/>
+fBodyGyro-mean()-X.std<br/>
+fBodyGyro-mean()-Y.std<br/>
+fBodyGyro-mean()-Z.std<br/>
+fBodyGyro-std()-X.std<br/>
+fBodyGyro-std()-Y.std<br/>
+fBodyGyro-std()-Z.std<br/>
+fBodyAccMag-mean().std<br/>
+fBodyAccMag-std().std<br/>
+fBodyBodyAccJerkMag-mean().std<br/>
+fBodyBodyAccJerkMag-std().std<br/>
+fBodyBodyGyroMag-mean().std<br/>
+fBodyBodyGyroMag-std().std<br/>
+fBodyBodyGyroJerkMag-mean().std<br/>
+fBodyBodyGyroJerkMag-std().std  </p>
+
+<h2>4.3: CODEBOOK OF VARIABLES FROM &ldquo;summarizedData()&rdquo; OUTPUT</h2>
+
+<p>The output of &ldquo;summarizedData()&rdquo; is the mean and standard deviation of each variable of &ldquo;extractMeanStdColumns()&rdquo;&ldquo; output, that is to say of each variable in the table above except for &quot;subject&rdquo;, &ldquo;activity&rdquo; and &ldquo;train&rdquo; variables for which the mean and standard deviation are not calculated.<br/>
+For example, to the &ldquo;tBodyAcc-mean()-X&rdquo; variable in the &ldquo;extractMeanStdColumns()&rdquo; output, corresponds 2 variables: &ldquo;tBodyAcc- mean()-X.mean&rdquo; and &ldquo;tBodyAcc-mean()-X.sd&rdquo; which represent the mean and standard deviation of the variable &ldquo;tBodyAcc-mean()-X&rdquo;.<br/>
+Please notice that once generated the dataframe dt as output of the &ldquo;summarizedData()&rdquo; function, if you call dim(dt) or names(dt) it may seem that dt did not contain mean and standard deviation information.<br/>
+Please type head(dt) or dt in the command line to display the real structure of this dataframe and display mean and standard deviation data.<br/>
+This &ldquo;stange&rdquo; behaviour is due to the &ldquo;aggragate()&rdquo; function used to build the dataframe &ldquo;dt&rdquo; called within &ldquo;summarizedData()&rdquo; function.
+The &ldquo;aggregate()&rdquo; function, for each column of the its input dataframe, builds a 2 column matrix: one column containing the mean and the other the standard deviation.
+In other words, for example, from the vector variable &ldquo;tBodyAcc-mean()- X&rdquo;, the &ldquo;aggregate()&rdquo; function creates a 2 column matrix named &ldquo;tBodyAcc-mean()-X&rdquo;. The same applies to the other variables such as &ldquo;tBodyAcc-mean()-Y&rdquo; and &ldquo;tBodyAcc-mean()-Z&rdquo;.
+If you now call dim(ht) or names(ht), you will only display the matrix names, that is to say &ldquo;tBodyAcc-mean()-X&rdquo;, &ldquo;tBodyAcc-mean()-Y&rdquo;, &ldquo;tBodyAcc-mean()-Z&rdquo; etc, which may mislead and make people think that there is no mean or standard deviation information in it.<br/>
+But if you now print out values instead of names through commands like head(dt) or dt you will notice that, for example the matrix &ldquo;tBodyAcc- mean()-X&rdquo;, actually contains both fields: &ldquo;tBodyAcc-mean()-X.mean&rdquo; and &ldquo;tBodyAcc-mean()-X.sd&rdquo;
+The exhaustive list of variables is reported in Appendix 3.</p>
+
+<p>The exhaustive list of variables si as follows: 
+subject: numeric variable ranging from 1:30<br/>
+activity: categrical variable indicating the activity 
+train: boolean variable indicating if the subject belongs to the training ortest group.<br/>
+All the rest are double precision numerical variable.<br/>
+tBodyAcc-mean()-X.mean<br/>
+tBodyAcc-mean()-Y.mean<br/>
+tBodyAcc-mean()-Z.mean<br/>
+tBodyAcc-std()-X.mean<br/>
+tBodyAcc-std()-Y.mean<br/>
+tBodyAcc-std()-Z.mean<br/>
+tGravityAcc-mean()-X.mean<br/>
+tGravityAcc-mean()-Y.mean<br/>
+tGravityAcc-mean()-Z.mean<br/>
+tGravityAcc-std()-X.mean<br/>
+tGravityAcc-std()-Y.mean<br/>
+tGravityAcc-std()-Z.mean<br/>
+tBodyAccJerk-mean()-X.mean<br/>
+tBodyAccJerk-mean()-Y.mean<br/>
+tBodyAccJerk-mean()-Z.mean<br/>
+tBodyAccJerk-std()-X.mean<br/>
+tBodyAccJerk-std()-Y.mean<br/>
+tBodyAccJerk-std()-Z.mean<br/>
+tBodyGyro-mean()-X.mean<br/>
+tBodyGyro-mean()-Y.mean<br/>
+tBodyGyro-mean()-Z.mean<br/>
+tBodyGyro-std()-X.mean<br/>
+tBodyGyro-std()-Y.mean<br/>
+tBodyGyro-std()-Z.mean<br/>
+tBodyGyroJerk-mean()-X.mean<br/>
+tBodyGyroJerk-mean()-Y.mean<br/>
+tBodyGyroJerk-mean()-Z.mean<br/>
+tBodyGyroJerk-std()-X.mean<br/>
+tBodyGyroJerk-std()-Y.mean<br/>
+tBodyGyroJerk-std()-Z.mean<br/>
+tBodyAccMag-mean().mean<br/>
+tBodyAccMag-std().mean<br/>
+tGravityAccMag-mean().mean<br/>
+tGravityAccMag-std().mean<br/>
+tBodyAccJerkMag-mean().mean<br/>
+tBodyAccJerkMag-std().mean<br/>
+tBodyGyroMag-mean().mean<br/>
+tBodyGyroMag-std().mean<br/>
+tBodyGyroJerkMag-mean().mean<br/>
+tBodyGyroJerkMag-std().mean<br/>
+fBodyAcc-mean()-X.mean<br/>
+fBodyAcc-mean()-Y.mean<br/>
+fBodyAcc-mean()-Z.mean<br/>
+fBodyAcc-std()-X.mean<br/>
+fBodyAcc-std()-Y.mean<br/>
+fBodyAcc-std()-Z.mean<br/>
+fBodyAccJerk-mean()-X.mean<br/>
+fBodyAccJerk-mean()-Y.mean<br/>
+fBodyAccJerk-mean()-Z.mean<br/>
+fBodyAccJerk-std()-X.mean<br/>
+fBodyAccJerk-std()-Y.mean<br/>
+fBodyAccJerk-std()-Z.mean<br/>
+fBodyGyro-mean()-X.mean<br/>
+fBodyGyro-mean()-Y.mean<br/>
+fBodyGyro-mean()-Z.mean<br/>
+fBodyGyro-std()-X.mean<br/>
+fBodyGyro-std()-Y.mean<br/>
+fBodyGyro-std()-Z.mean<br/>
+fBodyAccMag-mean().mean<br/>
+fBodyAccMag-std().mean<br/>
+fBodyBodyAccJerkMag-mean().mean<br/>
+fBodyBodyAccJerkMag-std().mean<br/>
+fBodyBodyGyroMag-mean().mean<br/>
+fBodyBodyGyroMag-std().mean<br/>
+fBodyBodyGyroJerkMag-mean().mean<br/>
+fBodyBodyGyroJerkMag-std().mean<br/>
+tBodyAcc-mean()-X.std<br/>
+tBodyAcc-mean()-Y.std<br/>
+tBodyAcc-mean()-Z.std<br/>
+tBodyAcc-std()-X.std<br/>
+tBodyAcc-std()-Y.std<br/>
+tBodyAcc-std()-Z.std<br/>
+tGravityAcc-mean()-X.std<br/>
+tGravityAcc-mean()-Y.std<br/>
+tGravityAcc-mean()-Z.std<br/>
+tGravityAcc-std()-X.std<br/>
+tGravityAcc-std()-Y.std<br/>
+tGravityAcc-std()-Z.std<br/>
+tBodyAccJerk-mean()-X.std<br/>
+tBodyAccJerk-mean()-Y.std<br/>
+tBodyAccJerk-mean()-Z.std<br/>
+tBodyAccJerk-std()-X.std<br/>
+tBodyAccJerk-std()-Y.std<br/>
+tBodyAccJerk-std()-Z.std<br/>
+tBodyGyro-mean()-X.std<br/>
+tBodyGyro-mean()-Y.std<br/>
+tBodyGyro-mean()-Z.std<br/>
+tBodyGyro-std()-X.std<br/>
+tBodyGyro-std()-Y.std<br/>
+tBodyGyro-std()-Z.std<br/>
+tBodyGyroJerk-mean()-X.std<br/>
+tBodyGyroJerk-mean()-Y.std<br/>
+tBodyGyroJerk-mean()-Z.std<br/>
+tBodyGyroJerk-std()-X.std<br/>
+tBodyGyroJerk-std()-Y.std<br/>
+tBodyGyroJerk-std()-Z.std<br/>
+tBodyAccMag-mean().std<br/>
+tBodyAccMag-std().std<br/>
+tGravityAccMag-mean().std<br/>
+tGravityAccMag-std().std<br/>
+tBodyAccJerkMag-mean().std<br/>
+tBodyAccJerkMag-std().std<br/>
+tBodyGyroMag-mean().std<br/>
+tBodyGyroMag-std().std<br/>
+tBodyGyroJerkMag-mean().std<br/>
+tBodyGyroJerkMag-std().std<br/>
+fBodyAcc-mean()-X.std<br/>
+fBodyAcc-mean()-Y.std<br/>
+fBodyAcc-mean()-Z.std<br/>
+fBodyAcc-std()-X.std<br/>
+fBodyAcc-std()-Y.std<br/>
+fBodyAcc-std()-Z.std<br/>
+fBodyAccJerk-mean()-X.std<br/>
+fBodyAccJerk-mean()-Y.std<br/>
+fBodyAccJerk-mean()-Z.std<br/>
+fBodyAccJerk-std()-X.std<br/>
+fBodyAccJerk-std()-Y.std<br/>
+fBodyAccJerk-std()-Z.std<br/>
+fBodyGyro-mean()-X.std<br/>
+fBodyGyro-mean()-Y.std<br/>
+fBodyGyro-mean()-Z.std<br/>
+fBodyGyro-std()-X.std<br/>
+fBodyGyro-std()-Y.std<br/>
+fBodyGyro-std()-Z.std<br/>
+fBodyAccMag-mean().std<br/>
+fBodyAccMag-std().std<br/>
+fBodyBodyAccJerkMag-mean().std<br/>
+fBodyBodyAccJerkMag-std().std<br/>
+fBodyBodyGyroMag-mean().std<br/>
+fBodyBodyGyroMag-std().std<br/>
+fBodyBodyGyroJerkMag-mean().std<br/>
+fBodyBodyGyroJerkMag-std().std  </p>
+
+</body>
+
+</html>
+
